@@ -581,7 +581,7 @@ static void ble_app_task(void *arg)
             vTaskDelete(NULL);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(300));
+        vTaskDelay(pdMS_TO_TICKS(50));  // 减少到50ms
     }
 }
 
