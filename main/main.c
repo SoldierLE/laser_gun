@@ -10,6 +10,30 @@
 #include "gun_gatt_server.h"
 #include "gun_ble_app.h"
 
+// 测试蓝牙改名功能
+static void test_ble_rename(void)
+{
+    // 等待蓝牙初始化完成
+    //vTaskDelay(pdMS_TO_TICKS(2000));
+    
+    // 测试设置设备名称
+    esp_err_t ret = gun_ble_set_device_name("LG123456789");
+    if (ret == ESP_OK) {
+        printf("设备名称设置成功: LG123456789\n");
+    } else {
+        printf("设备名称设置失败: %s\n", esp_err_to_name(ret));
+    }
+    
+    // 测试获取设备名称
+    char device_name[20];
+    ret = gun_ble_get_device_name(device_name, sizeof(device_name));
+    if (ret == ESP_OK) {
+        printf("当前设备名称: %s\n", device_name);
+    } else {
+        printf("获取设备名称失败: %s\n", esp_err_to_name(ret));
+    }
+}
+
 void app_main(void)
 {
     esp_err_t ret = nvs_flash_init();
@@ -37,4 +61,7 @@ void app_main(void)
     gun_ir_rx_init();
     //初始化ws2812
     gun_ws2812_init();
+    
+    // 测试蓝牙改名功能
+    test_ble_rename();
 }

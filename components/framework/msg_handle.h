@@ -3,12 +3,13 @@
 
 #include <string.h>
 
-#define BLE_NOTIFY_MSG_MAX_NUM       3      //后续根据需要添加
+#define BLE_NOTIFY_MSG_MAX_NUM       4      //后续根据需要添加
 
 typedef enum{
     BLE_KEY_EVENT = 0,
     BLE_CONTROL_EVENT,
     BLE_INFRARED_EVENT,
+    BLE_RENAME_EVENT,
 }ble_type_t;
 
 typedef struct{ 
