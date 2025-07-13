@@ -106,38 +106,38 @@ static void button_cbk(void *button)
         if ((struct Button *)button == &botton_map)
         {
             ESP_LOGI(TAG, "----MAP SINGLE_CLICK----");
-            button_data[1] = 0x02;  // D1: 地图按键
-            button_data[2] = 0x00;  // 第二个字节
+            button_data[1] = 0x00;  // D1: 地图按键
+            button_data[2] = 0x02;  // 第二个字节
         }
         else if ((struct Button *)button == &botton_score)
         {
             ESP_LOGI(TAG, "----SCORE SINGLE_CLICK----");
-            button_data[1] = 0x04;  // D2: 积分按键
-            button_data[2] = 0x00;  // 第二个字节
+            button_data[1] = 0x00;  // D2: 积分按键
+            button_data[2] = 0x04;  // 第二个字节
         }
         else if ((struct Button *)button == &botton_scope)
         {
             ESP_LOGI(TAG, "----SCOPE SINGLE_CLICK----");
-            button_data[1] = 0x08;  // D3: 倍镜按键
-            button_data[2] = 0x00;  // 第二个字节
+            button_data[1] = 0x00;  // D3: 倍镜按键
+            button_data[2] = 0x08;  // 第二个字节
         }
         else if ((struct Button *)button == &botton_ultre)
         {
             ESP_LOGI(TAG, "----ULTRE SINGLE_CLICK----");
-            button_data[1] = 0x10;  // D4: 大招按键
-            button_data[2] = 0x00;  // 第二个字节
+            button_data[1] = 0x00;  // D4: 大招按键
+            button_data[2] = 0x10;  // 第二个字节
         }
         else if ((struct Button *)button == &botton_skill)
         {
             ESP_LOGI(TAG, "----SKILL SINGLE_CLICK----");
-            button_data[1] = 0x80;  // D7: 小招按键
-            button_data[2] = 0x00;  // 第二个字节
+            button_data[1] = 0x10;  // D7: 小招按键
+            button_data[2] = 0x80;  // 第二个字节
         }
         else if ((struct Button *)button == &botton_panel)
         {
             ESP_LOGI(TAG, "----PANEL SINGLE_CLICK----");
-            button_data[1] = 0x01;  // D0: 放倒按键 (原来D8改为D0)
-            button_data[2] = 0x00;  // 第二个字节
+            button_data[1] = 0x00;  // D0: 放倒按键 (原来D8改为D0)
+            button_data[2] = 0x01;  // 第二个字节
         }
 
         data_len = sizeof(button_data);
@@ -154,20 +154,20 @@ static void button_cbk(void *button)
         if ((struct Button *)button == &botton_shoot)
         {
             ESP_LOGI(TAG, "----SHOOT PRESS_DOWN----");
-            button_data[1] = 0x40;  // D6: 射击按键
-            button_data[2] = 0x00;  // 第二个字节
+            button_data[1] = 0x00;  // D6: 射击按键
+            button_data[2] = 0x40;  // 第二个字节
         }
         else if ((struct Button *)button == &botton_reload)
         {
             ESP_LOGI(TAG, "----RELOAD PRESS_DOWN----");
-            button_data[1] = 0x20;  // D5: 上弹按键
-            button_data[2] = 0x00;  // 第二个字节
+            button_data[1] = 0x00;  // D5: 上弹按键
+            button_data[2] = 0x20;  // 第二个字节
         }
         else if ((struct Button *)button == &botton_voice)
         {
             ESP_LOGI(TAG, "----VOICE PRESS_DOWN (语音开)----");
-            button_data[1] = 0x00;  // 第一个字节
-            button_data[2] = 0x01;  // D8: 队内语音开 (第二个字节bit 0)
+            button_data[1] = 0x01;  // 第一个字节
+            button_data[2] = 0x00;  // D8: 队内语音开 (第二个字节bit 0)
         }
         else
         {
