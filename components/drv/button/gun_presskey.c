@@ -130,7 +130,7 @@ static void button_cbk(void *button)
         else if ((struct Button *)button == &botton_skill)
         {
             ESP_LOGI(TAG, "----SKILL SINGLE_CLICK----");
-            button_data[1] = 0x10;  // D7: 小招按键
+            button_data[1] = 0x00;  // D7: 小招按键
             button_data[2] = 0x80;  // 第二个字节
         }
         else if ((struct Button *)button == &botton_panel)
@@ -184,8 +184,8 @@ static void button_cbk(void *button)
         {
             ESP_LOGI(TAG, "----VOICE PRESS_UP (语音关)----");
             button_data[0] = 0x68;
-            button_data[1] = 0x00;  // 第一个字节
-            button_data[2] = 0x02;  // D9: 队内语音关 (第二个字节bit 1)
+            button_data[1] = 0x02;  // 第一个字节
+            button_data[2] = 0x00;  // D9: 队内语音关 (第二个字节bit 1)
             button_data[3] = 0x16;
 
             data_len = sizeof(button_data);
