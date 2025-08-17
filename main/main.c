@@ -56,12 +56,12 @@ void app_main(void)
     //初始化充电task
     gun_charge_init();
     //初始化红外发送
-     gun_ir_tx_init();
+    gun_ir_tx_init();
     //初始化红外接收
     gun_ir_rx_init();
     //初始化ws2812
     gun_ws2812_init();
     
     // 测试蓝牙改名功能
-    test_ble_rename();
+    //test_ble_rename();
 }

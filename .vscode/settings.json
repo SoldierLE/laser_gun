@@ -22,7 +22,8 @@
         "led.h": "c",
         "*.inc": "c",
         "*.def": "c",
-        "gun_gatt_server.h": "c"
+        "gun_gatt_server.h": "c",
+        "string_view": "c"
     },
     "idf.adapterTargetName": "esp32s3",
     "idf.espIdfPathWin": "D:/Espressif4/frameworks/esp-idf-v4.4.7/",
