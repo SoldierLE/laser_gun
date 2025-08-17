@@ -23,12 +23,13 @@
         "*.inc": "c",
         "*.def": "c",
         "gun_gatt_server.h": "c",
-        "string_view": "c"
+        "string_view": "c",
+        "cstdint": "c"
     },
     "idf.adapterTargetName": "esp32s3",
     "idf.espIdfPathWin": "D:/Espressif4/frameworks/esp-idf-v4.4.7/",
     "idf.toolsPathWin": "D:\\Espressif4",
     "idf.pythonInstallPath": "D:\\Espressif4\\tools\\idf-python\\3.11.2\\python.exe",
     "idf.flashType": "UART",
-    "idf.portWin": "COM5"
+    "idf.portWin": "COM7"
 }

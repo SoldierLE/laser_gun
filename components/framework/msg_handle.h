@@ -30,6 +30,8 @@ typedef struct{
 
 void msg_handle_init(void);
 void msg_handle_send(void *p_msg);
+void msg_handle_update_data(void *p_msg);  // 新增：实时更新数据函数
+void msg_handle_clear_data(void);          // 新增：清空数据函数
 app_to_gun_data_t *get_app_to_gun_data(void);
 void msg_handle_notify(ble_type_t type, void *data, uint8_t len);
 void msg_handle_register(ble_type_t type, ble_event_callback event_cb);

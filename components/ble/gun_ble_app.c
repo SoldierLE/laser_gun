@@ -80,8 +80,9 @@ void gun_ble_app_task(void *arg)
 
 		if (data->user_code != 0x00) {	//这里偷懒使用用户数据来判断 用户数据是不为0的
 			gun_la_ctr(gun_get_ctr_bit(data->output_ctr, CTR_LA));
-			gun_infrared_ctr(gun_get_ctr_bit(data->output_ctr, CTR_IR_1), 0);
-			gun_infrared_ctr(gun_get_ctr_bit(data->output_ctr, CTR_IR_2), 1);
+			// 移除红外发射，避免重复发射
+			// gun_infrared_ctr(gun_get_ctr_bit(data->output_ctr, CTR_IR_1), 0);
+			// gun_infrared_ctr(gun_get_ctr_bit(data->output_ctr, CTR_IR_2), 1);
 
 			control_data[0] = 0x68;
 			control_data[2] = 0x00;
@@ -89,9 +90,14 @@ void gun_ble_app_task(void *arg)
 			data_len = sizeof(control_data);
 			
 			msg_handle_notify(BLE_CONTROL_EVENT, control_data, data_len);
+			
+			// 发射完成后立即清空数据，防止重复发射
+			msg_handle_clear_data();
+			ESP_LOGI(TAG, "Control data processed, data cleared");
 		}
 
-		vTaskDelay(500 / portTICK_PERIOD_MS);
+		// 减少延迟时间，提高响应速度
+		vTaskDelay(10 / portTICK_PERIOD_MS);  // 从50ms减少到10ms
 	}
 }
 

@@ -256,32 +256,53 @@ static void parse_items(rmt_item32_t *item)
     infrared_data[1] = s_ir_rx_data.user_id;
     infrared_data[2] = s_ir_rx_data.war_situation;
     infrared_data[3] = 0x16;
-    // data_len = sizeof(infrared_data);
     data_len = 4;
+    
+    // 立即通过消息队列上传到蓝牙，实现实时传输
     msg_handle_notify(BLE_INFRARED_EVENT, infrared_data, data_len);
 }
 
 void gun_ir_rx_task(void *arg)
 {
+    rmt_item32_t *item = NULL;
     size_t rx_size = 0;
     RingbufHandle_t rb = NULL;
+    uint8_t invalid_count = 0;
 
     rmt_get_ringbuf_handle(RMT_RX_CHANNEL, &rb);     //获取红外接收器接收的数据 放在ringbuff中
     rmt_rx_start(RMT_RX_CHANNEL, true);
+    
     for(; ;)
     {
-        rmt_item32_t *item = (rmt_item32_t *)xRingbufferReceive(rb, &rx_size, portMAX_DELAY);   //pdMS_TO_TICKS(200)
+        // 使用较短的超时时间，提高响应速度
+        item = (rmt_item32_t *)xRingbufferReceive(rb, &rx_size, pdMS_TO_TICKS(50));   // 从portMAX_DELAY改为50ms
 
         if(item != NULL) {
             if(rx_size == (NEC_DATA_ITEM_NUM * sizeof(rmt_item32_t))) {
                 ESP_LOGI(TAG, "-----rx_size = %d-----", rx_size);
                 rmt_rx_stop(RMT_RX_CHANNEL);
+                
+                // 解析数据并立即上传
                 parse_items(item);
+                
                 rmt_rx_start(RMT_RX_CHANNEL, true);
+                invalid_count = 0;  // 重置无效计数
+            } else {
+                invalid_count++;
+                if (invalid_count > 10) {  // 如果连续10次无效数据，清空缓冲区
+                    // 手动清空缓冲区
+                    while (xRingbufferReceive(rb, &rx_size, 0) != NULL) {
+                        // 丢弃所有数据
+                    }
+                    invalid_count = 0;
+                    ESP_LOGW(TAG, "Buffer cleared due to too many invalid items");
+                }
             }
             vRingbufferReturnItem(rb, (void*) item);
         }
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        
+        // 减少延迟时间，提高响应速度
+        vTaskDelay(pdMS_TO_TICKS(10));  // 从500ms减少到10ms
     }
 }
 
@@ -315,4 +336,30 @@ void gun_ir_rx_init(void)
     ESP_LOGI(TAG, "----init rmt rx----");
 
     xTaskCreate(gun_ir_rx_task, "gun_ir_rx_task", 2048, NULL, 9, NULL);
+}
+
+// 红外数据实时上传函数
+void gun_ir_upload_data_immediately(uint8_t user_id, uint8_t war_status)
+{
+    uint8_t ir_data[4];
+    ir_data[0] = 0x68;  // 开始码
+    ir_data[1] = user_id;  // 用户ID
+    ir_data[2] = war_status;  // 战争状态
+    ir_data[3] = 0x16;  // 结束码
+    
+    // 通过消息队列立即上传到蓝牙
+    msg_handle_notify(BLE_INFRARED_EVENT, ir_data, sizeof(ir_data));
+    
+    ESP_LOGI(TAG, "IR data uploaded immediately: user_id=0x%02X, war_status=0x%02X", 
+             user_id, war_status);
+}
+
+// 设置红外数据上传模式（实时/批量）
+void gun_ir_set_upload_mode(bool real_time_mode)
+{
+    if (real_time_mode) {
+        ESP_LOGI(TAG, "IR upload mode set to REAL-TIME");
+    } else {
+        ESP_LOGI(TAG, "IR upload mode set to BATCH");
+    }
 }

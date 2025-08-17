@@ -16,8 +16,14 @@
 #include "gun_charge.h"
 #include "nvs_flash.h"
 #include "nvs.h"
+#include "gun_infrared.h"  // 新增：直接引用红外发射模块
 
 #define GATTS_TABLE_TAG "GATTS_TABLE_DEMO"
+
+// 新增：红外发射间隔控制
+#define IR_TRANSMISSION_INTERVAL_MS 200  // 最小发射间隔200ms
+static uint32_t last_ir_transmission_time = 0;
+static bool ir_transmission_in_progress = false;  // 新增：红外发射状态标志
 
 #define PROFILE_NUM 1
 #define PROFILE_APP_IDX 0
@@ -837,7 +843,47 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
                 if (param->write.len > 0)
                 {
                     memcpy(p_ble_recv_t->recv_to_gun_data, param->write.value, param->write.len);
-                    // 发送消息队列
+                    
+                    // 立即处理红外发射数据，不等待消息队列
+                    app_to_gun_data_t *data = (app_to_gun_data_t *)&p_ble_recv_t->recv_to_gun_data;
+                    if (data->user_code != 0x00 && !ir_transmission_in_progress) {
+                        ESP_LOGI(GATTS_TABLE_TAG, "Immediate IR processing - user_code: 0x%04X, output_ctr: 0x%02X", 
+                                 data->user_code, data->output_ctr);
+                        
+                        // 检查发射间隔，防止过于频繁的发射
+                        uint32_t current_time = esp_timer_get_time() / 1000; // 转换为毫秒
+                        if (current_time - last_ir_transmission_time >= IR_TRANSMISSION_INTERVAL_MS) {
+                            // 设置发射状态标志
+                            ir_transmission_in_progress = true;
+                            
+                            // 直接触发红外发射，实现真正的实时处理
+                            if (data->output_ctr & 0x04) {  // CTR_IR_1
+                                ESP_LOGI(GATTS_TABLE_TAG, "Triggering IR channel 0 immediately");
+                                gun_ir_tx_task(0);  // 直接调用红外发射
+                            }
+                            if (data->output_ctr & 0x08) {  // CTR_IR_2
+                                ESP_LOGI(GATTS_TABLE_TAG, "Triggering IR channel 1 immediately");
+                                gun_ir_tx_task(1);  // 直接调用红外发射
+                            }
+                            
+                            // 更新最后发射时间
+                            last_ir_transmission_time = current_time;
+                            
+                            // 发射完成后立即清空数据，防止重复发射
+                            msg_handle_clear_data();
+                            ESP_LOGI(GATTS_TABLE_TAG, "IR transmission completed, data cleared");
+                            
+                            // 清除发射状态标志
+                            ir_transmission_in_progress = false;
+                        } else {
+                            ESP_LOGW(GATTS_TABLE_TAG, "IR transmission skipped, interval too short: %dms", 
+                                     current_time - last_ir_transmission_time);
+                        }
+                    } else if (ir_transmission_in_progress) {
+                        ESP_LOGW(GATTS_TABLE_TAG, "IR transmission skipped, transmission in progress");
+                    }
+                    
+                    // 发送消息队列（保持原有逻辑，用于其他功能）
                     msg_handle_send(&p_ble_recv_t->recv_to_gun_data);
                 }
             }
