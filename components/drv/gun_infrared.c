@@ -256,8 +256,8 @@ static void parse_items(rmt_item32_t *item)
     infrared_data[1] = s_ir_rx_data.user_id;
     infrared_data[2] = s_ir_rx_data.war_situation;
     infrared_data[3] = 0x16;
-    data_len = sizeof(infrared_data);
-
+    // data_len = sizeof(infrared_data);
+    data_len = 4;
     msg_handle_notify(BLE_INFRARED_EVENT, infrared_data, data_len);
 }
 

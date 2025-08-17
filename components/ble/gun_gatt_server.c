@@ -210,8 +210,8 @@ static const uint16_t GATTS_UUID_LASER_GUN = 0xABF0;
 static const uint16_t GATTS_UUID_APP_TO_GUN = 0xABF1;
 static const uint16_t GATTS_UUID_GUN_TO_APP_HEART = 0xABF2;
 static const uint16_t GATTS_UUID_GUN_TO_APP_KEY = 0xABF3;
-static const uint16_t GATTS_UUID_GUN_TO_APP_FEEDBACK = 0xABF4;
-static const uint16_t GATTS_UUID_GUN_TO_APP_INFRARED = 0xABF5;
+static const uint16_t GATTS_UUID_GUN_TO_APP_FEEDBACK = 0xABF5;
+static const uint16_t GATTS_UUID_GUN_TO_APP_INFRARED = 0xABF4;
 static const uint16_t GATTS_UUID_DEVICE_RENAME = 0xABE1;
 static const uint16_t GATTS_UUID_DEVICE_RENAME_FEEDBACK = 0xABE2;
 
